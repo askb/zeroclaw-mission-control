@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+---
+name: SHA-Pinned Actions Audit
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Verify SHA-Pinned Actions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Audit action references
+        run: |
+          echo "Checking all workflow files for SHA-pinned actions..."
+          ERRORS=0
+
+          for file in .github/workflows/*.yaml .github/workflows/*.yml; do
+            [[ -f "${file}" ]] || continue
+            while IFS= read -r match; do
+              line_num="${match%%:*}"
+              line_content="${match#*:}"
+              # Skip comments
+              echo "${line_content}" | grep -q '^\s*#' && continue
+              # Check for non-SHA references
+              if echo "${line_content}" | grep -qP 'uses:\s+\S+@(?![0-9a-f]{40})'; then
+                echo "❌ ${file}:${line_num}: ${line_content}"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done < <(grep -n 'uses:' "${file}" 2>/dev/null || true)
+          done
+
+          if [[ ${ERRORS} -gt 0 ]]; then
+            echo ""
+            echo "::error::${ERRORS} action(s) not pinned to full SHA commit hash"
+            echo "Fix: Pin actions to SHA with version comment, e.g.:"
+            echo "  uses: actions/checkout@abcdef1234567890...  # v4.3.1"
+            exit 1
+          fi
+          echo "✅ All ${ERRORS:-0} actions verified as SHA-pinned"
