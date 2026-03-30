@@ -1,8 +1,4 @@
 {
-  "meta": {
-    "lastTouchedVersion": "2026.3.28",
-    "lastTouchedAt": "2026-03-30T13:37:16.552Z"
-  },
   "agents": {
     "defaults": {
       "compaction": {
@@ -26,10 +22,6 @@
   "gateway": {
     "port": 18789,
     "bind": "lan",
-    "auth": {
-      "mode": "token",
-      "token": "e027325a89b8463de7e40adf0395a625b449d8cec1bd490b"
-    },
     "controlUi": {
       "allowedOrigins": [
         "http://192.168.1.77:4000",
@@ -39,6 +31,14 @@
         "http://localhost:18789"
       ],
       "dangerouslyDisableDeviceAuth": true
+    },
+    "auth": {
+      "mode": "token",
+      "token": "e027325a89b8463de7e40adf0395a625b449d8cec1bd490b"
     }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.3.28",
+    "lastTouchedAt": "2026-03-30T22:20:13.805Z"
   }
 }

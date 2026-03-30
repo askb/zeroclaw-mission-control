@@ -52,3 +52,14 @@ tmp/
 
 # Detect-secrets baseline
 .secrets.baseline
+
+# Gateway runtime artifacts
+config/gateway/openclaw.json.bak*
+config/gateway/openclaw.json.clobbered*
+config/gateway/identity/
+config/gateway/devices/
+config/gateway/logs/
+config/gateway/canvas/
+config/gateway/workspace/
+config/gateway/update-check.json
+agents/main/

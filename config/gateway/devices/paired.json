@@ -1,48 +1,7 @@
 {
-  "ffd15304537463afd21ec2b640f1dba6673bc48894d3715bcf44a7c68394dabf": {
-    "deviceId": "ffd15304537463afd21ec2b640f1dba6673bc48894d3715bcf44a7c68394dabf",
-    "publicKey": "XhnOZNX5PeSJPbz2wB-lCLHs0fvKfwgHH_wXkzmVq-0",
-    "platform": "linux",
-    "clientId": "cli",
-    "clientMode": "cli",
-    "role": "operator",
-    "roles": [
-      "operator"
-    ],
-    "scopes": [
-      "operator.admin",
-      "operator.read",
-      "operator.write",
-      "operator.approvals",
-      "operator.pairing"
-    ],
-    "approvedScopes": [
-      "operator.admin",
-      "operator.read",
-      "operator.write",
-      "operator.approvals",
-      "operator.pairing"
-    ],
-    "tokens": {
-      "operator": {
-        "token": "JaOvNqIRHmlLi9YjFN0l2Xe2Vl-XCsoGIB-5_LTgtu0",
-        "role": "operator",
-        "scopes": [
-          "operator.admin",
-          "operator.approvals",
-          "operator.pairing",
-          "operator.read",
-          "operator.write"
-        ],
-        "createdAtMs": 1774879902346
-      }
-    },
-    "createdAtMs": 1774879902346,
-    "approvedAtMs": 1774879902346
-  },
-  "a84d9a0fa3938d844211fa62f937157b8c795a916a1e235905ead123d742b22c": {
-    "deviceId": "a84d9a0fa3938d844211fa62f937157b8c795a916a1e235905ead123d742b22c",
-    "publicKey": "l782r9_6u1HVEO6q026TuOf1E-Cm3V4kwwNj0Hjqy2k",
+  "dab992b53943bc795e6b0828958977fc51fd3c2403f26e50471aba873f756636": {
+    "deviceId": "dab992b53943bc795e6b0828958977fc51fd3c2403f26e50471aba873f756636",
+    "publicKey": "XNFl52ESUA0utoROA2ePu8WXw0antlS4ZIBpbUu_-Ig",
     "platform": "linux",
     "clientId": "cli",
     "clientMode": "ui",
@@ -64,19 +23,19 @@
       "operator.approvals",
       "operator.pairing"
     ],
-    "createdAtMs": 1774880125490,
-    "approvedAtMs": 1774880125490,
+    "createdAtMs": 1774909346581,
+    "approvedAtMs": 1774909346581,
     "remoteIp": "172.20.0.4",
     "tokens": {
       "operator": {
-        "token": "0zycfJmpoQjqGQCV072OyXluF-pYxJsnZ5oi09lM3BI",
+        "token": "DUvsb90y3h6UZtsqBhOe2VlxmRHDZBh6JjvFrz3Ca6o",
         "role": "operator",
         "scopes": [
           "operator.admin",
           "operator.read",
           "operator.write"
         ],
-        "createdAtMs": 1774880133834
+        "createdAtMs": 1774909358638
       }
     }
   }
