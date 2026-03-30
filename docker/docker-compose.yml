@@ -11,7 +11,7 @@ services:
     container_name: zeroclaw-gateway
     volumes:
       - ../config/gateway:/home/node/.openclaw
-      - ../agents:/home/node/.openclaw/agents:ro
+      - ../agents:/home/node/.openclaw/agents
       - ../workspace:/home/node/workspace
     ports:
       - "${GATEWAY_BIND_HOST:-127.0.0.1}:${GATEWAY_PORT:-18789}:18789"
@@ -72,10 +72,10 @@ services:
     networks:
       - zeroclaw-net
     # ── Security Hardening ──
-    # Mission Control needs writable dir for SQLite database
+    # Mission Control needs writable dirs for SQLite DB + device identity
     volumes:
       - mc-data:/app/data
-    user: "1000:1000"
+      - mc-identity:/home/node/.mission-control
     read_only: true
     tmpfs:
       - /tmp:size=50M,noexec,nosuid
@@ -153,6 +153,8 @@ volumes:
   redis-data:
     driver: local
   mc-data:
+    driver: local
+  mc-identity:
     driver: local
 
 networks:
