@@ -18,6 +18,10 @@ services:
     env_file: .env
     environment:
       - ZEROCLAW_GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     restart: unless-stopped
     networks:
       - zeroclaw-net

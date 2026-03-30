@@ -24,10 +24,14 @@
   agents: {
     defaults: {
       model: {
-        // Claude 3.5 Sonnet — best reasoning for coding and research
-        primary: "anthropic/claude-sonnet-4-20250514",
-        // GPT-4o as fallback if Anthropic is down
-        fallbacks: ["openai/gpt-4o"]
+        // OpenRouter provides access to all models with a single key
+        // Free models: google/gemini-2.5-flash, meta-llama/llama-4-maverick
+        // Paid models: anthropic/claude-sonnet-4-20250514, openai/gpt-4o
+        primary: "google/gemini-2.5-flash",
+        fallbacks: [
+          "meta-llama/llama-4-maverick",
+          "anthropic/claude-sonnet-4-20250514"
+        ]
       },
       workspace: "./workspace",
       // Agent timeout: 5 minutes max per task
@@ -45,8 +49,8 @@
         default: false,
         model: {
           // Researcher benefits from large context for synthesis
-          primary: "anthropic/claude-sonnet-4-20250514",
-          fallbacks: ["openai/gpt-4o"]
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
         }
       },
       {
@@ -56,8 +60,9 @@
         configDir: "./agents/code-architect",
         default: false,
         model: {
-          primary: "anthropic/claude-sonnet-4-20250514",
-          fallbacks: ["openai/gpt-4o"]
+          // Coder benefits from strong reasoning — use paid if available
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
         }
       },
       {
@@ -67,9 +72,8 @@
         configDir: "./agents/orchestrator",
         default: true,
         model: {
-          // Orchestrator needs strong reasoning for delegation
-          primary: "anthropic/claude-sonnet-4-20250514",
-          fallbacks: ["openai/gpt-4o"]
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
         }
       }
     ]

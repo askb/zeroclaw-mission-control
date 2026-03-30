@@ -78,13 +78,18 @@ function create_env_file() {
 # ⚠️  DO NOT COMMIT THIS FILE — it is gitignored
 
 # ─── API Provider Keys ───────────────────────────────────────────
-# Get your keys from:
-#   Anthropic: https://console.anthropic.com/settings/keys
-#   OpenAI:    https://platform.openai.com/api-keys
-#   Brave:     https://brave.com/search/api/
+# Option 1: OpenRouter (RECOMMENDED — single key for all models)
+#   Get key at: https://openrouter.ai/keys
+OPENROUTER_API_KEY=
+
+# Option 2: Direct provider keys (optional)
 ANTHROPIC_API_KEY=
 OPENAI_API_KEY=
 BRAVE_API_KEY=
+
+# Option 3: Google Gemini free tier
+#   Get key at: https://aistudio.google.com/apikey
+GOOGLE_API_KEY=
 
 # ─── Internal Tokens (auto-generated — do not share) ─────────────
 ZEROCLAW_GATEWAY_TOKEN=${gateway_token}
@@ -166,10 +171,11 @@ function main() {
 
     echo ""
     log_info "Setup complete! Next steps:"
-    echo "  1. Edit docker/.env and add your API keys:"
-    echo "     - ANTHROPIC_API_KEY (required)"
-    echo "     - OPENAI_API_KEY (optional, for fallback)"
-    echo "     - BRAVE_API_KEY (optional, for research agent)"
+    echo "  1. Edit docker/.env and add at least ONE API key:"
+    echo "     - OPENROUTER_API_KEY (recommended — single key for all models)"
+    echo "       Get free key: https://openrouter.ai/keys"
+    echo "     - GOOGLE_API_KEY (free tier: https://aistudio.google.com/apikey)"
+    echo "     - ANTHROPIC_API_KEY / OPENAI_API_KEY (if you have them)"
     echo "  2. Start services:"
     echo "     cd docker && docker compose up -d"
     echo "  3. Check health:"
