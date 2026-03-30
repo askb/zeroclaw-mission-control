@@ -1,0 +1,110 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 The Linux Foundation
+//
+// ZeroClaw Mission Control — Gateway Configuration
+// Docs: https://github.com/askb/zeroclaw-mission-control
+{
+  gateway: {
+    bind: "0.0.0.0",
+    port: 18789,
+    auth: {
+      // Token is injected from ZEROCLAW_GATEWAY_TOKEN env var
+      // NEVER hardcode tokens here
+      mode: "token",
+      tokenEnv: "ZEROCLAW_GATEWAY_TOKEN"
+    },
+    // Rate limiting to prevent abuse
+    rateLimit: {
+      enabled: true,
+      maxRequestsPerMinute: 60,
+      maxTokensPerMinute: 100000
+    }
+  },
+
+  agents: {
+    defaults: {
+      model: {
+        // OpenRouter provides access to all models with a single key
+        // Free models: google/gemini-2.5-flash, meta-llama/llama-4-maverick
+        // Paid models: anthropic/claude-sonnet-4-20250514, openai/gpt-4o
+        primary: "google/gemini-2.5-flash",
+        fallbacks: [
+          "meta-llama/llama-4-maverick",
+          "anthropic/claude-sonnet-4-20250514"
+        ]
+      },
+      workspace: "./workspace",
+      // Agent timeout: 5 minutes max per task
+      timeout: 300000,
+      // Max context tokens per agent
+      maxContextTokens: 128000
+    },
+
+    list: [
+      {
+        id: "researcher",
+        name: "Research Specialist",
+        description: "Expert at gathering, synthesizing, and fact-checking information",
+        configDir: "./agents/research-specialist",
+        default: false,
+        model: {
+          // Researcher benefits from large context for synthesis
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
+        }
+      },
+      {
+        id: "coder",
+        name: "Code Architect",
+        description: "Senior engineer for implementation, review, and debugging",
+        configDir: "./agents/code-architect",
+        default: false,
+        model: {
+          // Coder benefits from strong reasoning — use paid if available
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
+        }
+      },
+      {
+        id: "manager",
+        name: "Orchestrator",
+        description: "Task delegation, priority management, and agent coordination",
+        configDir: "./agents/orchestrator",
+        default: true,
+        model: {
+          primary: "google/gemini-2.5-flash",
+          fallbacks: ["meta-llama/llama-4-maverick"]
+        }
+      }
+    ]
+  },
+
+  // Inter-agent communication and session management
+  routing: {
+    sessions: {
+      // Agents can see each other's sessions for collaboration
+      visibility: "all",
+      // Session TTL: 24 hours
+      ttl: 86400000
+    },
+    // Allow agents to delegate tasks to each other
+    delegation: {
+      enabled: true,
+      // Only orchestrator can delegate by default
+      allowedDelegators: ["manager"]
+    }
+  },
+
+  // Redis for session state and message queuing
+  storage: {
+    driver: "redis",
+    redis: {
+      host: "zeroclaw-redis",
+      port: 6379,
+      // Password injected from REDIS_PASSWORD env var
+      passwordEnv: "REDIS_PASSWORD",
+      db: 0,
+      keyPrefix: "zeroclaw:"
+    }
+  }
+}

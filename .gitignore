@@ -10,6 +10,9 @@ docker/.env
 docker/data/
 docker/volumes/
 
+# Gateway temp files (written at runtime)
+config/gateway/*.tmp
+
 # Override files (developer-specific)
 docker/docker-compose.override.yml
 

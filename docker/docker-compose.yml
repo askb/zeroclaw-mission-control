@@ -10,7 +10,7 @@ services:
     image: ghcr.io/openclaw/openclaw:latest
     container_name: zeroclaw-gateway
     volumes:
-      - ../config/zeroclaw.json5:/home/node/.openclaw/openclaw.json5:ro
+      - ../config/gateway:/home/node/.openclaw
       - ../agents:/home/node/.openclaw/agents:ro
       - ../workspace:/home/node/workspace
     ports:
@@ -22,12 +22,13 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - NODE_OPTIONS=--max-old-space-size=3072
     restart: unless-stopped
     networks:
       - zeroclaw-net
     # ── Security Hardening ──
-    user: "1000:1000"
-    read_only: true
+    # Gateway needs write access to config dir for temp files
+    # Image runs as 'node' user — don't override
     tmpfs:
       - /tmp:size=100M,noexec,nosuid
     security_opt:
@@ -36,10 +37,10 @@ services:
       resources:
         limits:
           cpus: "2.0"
-          memory: 2G
+          memory: 4G
         reservations:
           cpus: "0.5"
-          memory: 512M
+          memory: 1G
     healthcheck:
       test:
         [
