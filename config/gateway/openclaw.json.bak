@@ -1,8 +1,4 @@
 {
-  "meta": {
-    "lastTouchedVersion": "2026.3.28",
-    "lastTouchedAt": "2026-03-30T13:31:53.089Z"
-  },
   "agents": {
     "defaults": {
       "compaction": {
@@ -24,11 +20,15 @@
     "ownerDisplay": "raw"
   },
   "gateway": {
-    "port": 18789,
-    "bind": "lan",
     "auth": {
       "mode": "token",
       "token": "3617190b87b2979dcc2a6164db6bfac7c96739589be00e57"
-    }
+    },
+    "bind": "0.0.0.0",
+    "port": 18789
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.3.28",
+    "lastTouchedAt": "2026-03-30T13:14:57.549Z"
   }
 }
