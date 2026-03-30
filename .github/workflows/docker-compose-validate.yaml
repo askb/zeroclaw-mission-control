@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+---
+name: Docker Compose Validate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - "config/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - "config/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Compose Config
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Create stub .env for validation
+        working-directory: docker
+        run: |
+          cat > .env <<'EOF'
+          ANTHROPIC_API_KEY=sk-ant-stub
+          OPENAI_API_KEY=sk-stub
+          BRAVE_API_KEY=BSA-stub
+          ZEROCLAW_GATEWAY_TOKEN=0000000000000000000000000000000000000000000000000000000000000000
+          REDIS_PASSWORD=stub_password_for_validation
+          GATEWAY_BIND_HOST=127.0.0.1
+          DASHBOARD_BIND_HOST=127.0.0.1
+          GATEWAY_PORT=18789
+          DASHBOARD_PORT=4000
+          EOF
+
+      - name: Validate docker-compose.yml
+        working-directory: docker
+        run: |
+          docker compose config --quiet
+          echo "✅ docker-compose.yml is valid"
+
+      - name: Check for hardcoded secrets
+        run: |
+          # Ensure no real tokens are in committed files
+          if grep -rn 'sk-ant-api\|sk-[a-zA-Z0-9]\{20,\}\|password.*=.*[a-zA-Z0-9]\{16,\}' \
+            --include='*.yml' --include='*.yaml' --include='*.json5' \
+            config/ docker/docker-compose.yml; then
+            echo "❌ Possible hardcoded secrets found!"
+            exit 1
+          fi
+          echo "✅ No hardcoded secrets detected"

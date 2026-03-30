@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+
+# Secrets — NEVER commit
+.env
+docker/.env
+*.env.local
+
+# Docker runtime
+docker/data/
+docker/volumes/
+
+# Override files (developer-specific)
+docker/docker-compose.override.yml
+
+# Workspace data
+workspace/
+.workspace/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Python (pre-commit)
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+
+# Node (if applicable)
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+.tmp/
+*.tmp
+
+# Detect-secrets baseline
+.secrets.baseline

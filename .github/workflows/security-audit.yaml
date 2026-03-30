@@ -1,0 +1,151 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+---
+name: Security Audit
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly security scan — Monday 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Run detect-secrets
+        run: |
+          pip install --quiet detect-secrets
+          # Scan all files, excluding known safe patterns
+          detect-secrets scan \
+            --exclude-files '\.env\.example$' \
+            --exclude-files '\.gitignore$' \
+            --exclude-files 'LICENSE$' \
+            --exclude-files '\.lock\.yml$' \
+            > .secrets-report.json
+
+          # Check if any secrets were found
+          if python3 -c "
+          import json, sys
+          with open('.secrets-report.json') as f:
+              data = json.load(f)
+          results = data.get('results', {})
+          total = sum(len(v) for v in results.values())
+          if total > 0:
+              print(f'❌ Found {total} potential secret(s):')
+              for file, secrets in results.items():
+                  for s in secrets:
+                      print(f'  {file}:{s[\"line_number\"]} — {s[\"type\"]}')
+              sys.exit(1)
+          print('✅ No secrets detected')
+          "; then
+            echo "Secret scan passed"
+          else
+            echo "::error::Potential secrets found — review .secrets-report.json"
+            exit 1
+          fi
+
+  credential-patterns:
+    name: Credential Pattern Scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Scan for credential patterns
+        run: |
+          ERRORS=0
+
+          # Check for hardcoded API keys
+          echo "── Checking for API key patterns ──"
+          if grep -rn 'sk-ant-api03\|sk-[a-zA-Z0-9]\{40,\}\|BSA[a-zA-Z0-9]\{30,\}' \
+            --include='*.yml' --include='*.yaml' --include='*.json5' \
+            --include='*.sh' --include='*.md' \
+            --exclude-dir='.git' .; then
+            echo "❌ Possible API keys found"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ No API key patterns"
+          fi
+
+          # Check for private keys
+          echo "── Checking for private keys ──"
+          if grep -rn 'BEGIN.*PRIVATE KEY\|BEGIN RSA\|BEGIN EC PRIVATE' \
+            --exclude-dir='.git' .; then
+            echo "❌ Private key material found"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ No private keys"
+          fi
+
+          # Check for .env files that shouldn't be committed
+          echo "── Checking for .env files in git ──"
+          if git ls-files '*.env' '.env' 'docker/.env' | grep -q .; then
+            echo "❌ .env file(s) tracked by git"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ No .env files in git"
+          fi
+
+          if [[ ${ERRORS} -gt 0 ]]; then
+            echo ""
+            echo "::error::Found ${ERRORS} credential pattern issue(s)"
+            exit 1
+          fi
+
+  sha-pinned:
+    name: SHA-Pinned Actions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Check actions are SHA-pinned
+        run: |
+          ERRORS=0
+          # Find all uses: lines with @tag (not SHA)
+          while IFS= read -r line; do
+            file="${line%%:*}"
+            content="${line#*:}"
+            # Skip lines that are comments
+            if echo "${content}" | grep -q '^\s*#'; then
+              continue
+            fi
+            # Check for tag-based references (v1, v2, main, master, etc.)
+            if echo "${content}" | grep -qP 'uses:\s+\S+@(v\d|main|master|latest)'; then
+              echo "❌ ${line}"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(grep -rn 'uses:' .github/workflows/ --include='*.yaml' --include='*.yml')
+
+          if [[ ${ERRORS} -gt 0 ]]; then
+            echo ""
+            echo "::error::Found ${ERRORS} action(s) not pinned to SHA"
+            exit 1
+          else
+            echo "✅ All actions are SHA-pinned"
+          fi
