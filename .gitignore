@@ -63,3 +63,9 @@ config/gateway/canvas/
 config/gateway/workspace/
 config/gateway/update-check.json
 agents/main/
+config/gateway/credentials/
+config/gateway/telegram/
+config/gateway/memory/
+config/gateway/openclaw.json
+config/gateway/devices/
+config/gateway/update-check.json
