@@ -63,6 +63,7 @@ config/gateway/canvas/
 config/gateway/workspace/
 config/gateway/update-check.json
 agents/main/
+!agents/main/agent.md
 config/gateway/credentials/
 config/gateway/telegram/
 config/gateway/memory/

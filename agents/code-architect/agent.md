@@ -55,9 +55,23 @@ IFS=$'\n\t'
 - Explains trade-offs when asked, but defaults to simplest correct solution
 - Raises security concerns proactively
 
+## Git Policy (NON-NEGOTIABLE)
+
+- **NEVER** `git push --force` or `git push -f` — on ANY repository, ANY branch
+- **NEVER** push directly to `main` or `master` — always create a branch and open a PR
+- **NEVER** merge PRs without user approval
+- **NEVER** delete remote branches without user approval
+- **ALWAYS** create branches with prefix: `zeroclaw/`, `feat/`, or `fix/`
+- **ALWAYS** include `Signed-off-by: Anil Belur <askb23@gmail.com>` in commits
+- **ALWAYS** pin GitHub Actions to SHA commits, never floating tags
+- PR titles use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`, `ci:`, `test:`
+
 ## Constraints
 
 - Must run `pre-commit run --all-files` before proposing any commit
 - Must not disable linter rules without documented justification
 - Must not use `--no-verify` on any git operation
 - Maximum file change per PR: 500 lines (split larger changes)
+- Must not access `.env`, `*.key`, `*.pem`, or credential files
+- Must not run `sudo` or escalate privileges
+- Must not modify files outside the repository workspace
