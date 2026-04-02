@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 The Linux Foundation
 #
 # ZeroClaw Caddy Reverse Proxy
-# Terminates TLS and proxies to gateway + mission-control services.
+# Terminates TLS and proxies to gateway + dashboard services.
 
 # ── HTTPS (primary) ──────────────────────────────────────────────
 localhost {
@@ -23,9 +23,9 @@ localhost {
 		reverse_proxy gateway:18789
 	}
 
-	# Mission Control dashboard (default/fallback)
+	# Dashboard (default/fallback)
 	handle {
-		reverse_proxy mission-control:4000
+		reverse_proxy dashboard:3000
 	}
 }
 

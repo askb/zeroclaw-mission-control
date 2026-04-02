@@ -63,25 +63,71 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  mission-control:
-    image: ghcr.io/crshdn/mission-control:latest
-    container_name: mission-control
+  # REMOVED: Using zeroclaw-dashboard instead (askb/zeroclaw-dashboard)
+  # mission-control:
+  #   image: ghcr.io/crshdn/mission-control:latest
+  #   container_name: mission-control
+  #   ports:
+  #     - "${DASHBOARD_BIND_HOST:-127.0.0.1}:${DASHBOARD_PORT:-4000}:4000"
+  #   environment:
+  #     - OPENCLAW_GATEWAY_URL=ws://gateway:18789
+  #     - OPENCLAW_GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
+  #   depends_on:
+  #     gateway:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #   networks:
+  #     - zeroclaw-net
+  #   volumes:
+  #     - mc-data:/app/data
+  #     - mc-identity:/home/node/.mission-control
+  #   read_only: true
+  #   tmpfs:
+  #     - /tmp:size=50M,noexec,nosuid
+  #   cap_drop:
+  #     - ALL
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "1.0"
+  #         memory: 512M
+  #       reservations:
+  #         cpus: "0.25"
+  #         memory: 128M
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD-SHELL",
+  #         "node -e \"fetch('http://localhost:4000').then(r=>{process.exit(r.ok?0:1)}).catch(()=>process.exit(1))\"",
+  #       ]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 15s
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
+
+  dashboard:
+    build:
+      context: ../../zeroclaw-dashboard
+      dockerfile: Dockerfile
+    container_name: zeroclaw-dashboard
     ports:
-      - "${DASHBOARD_BIND_HOST:-127.0.0.1}:${DASHBOARD_PORT:-4000}:4000"
+      - "${DASHBOARD_BIND_HOST:-127.0.0.1}:${DASHBOARD_PORT:-4000}:3000"
     environment:
-      - OPENCLAW_GATEWAY_URL=ws://gateway:18789
-      - OPENCLAW_GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
+      - GATEWAY_WS_URL=ws://gateway:18789
+      - GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
     depends_on:
       gateway:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - zeroclaw-net
-    # ── Security Hardening ──
-    # Mission Control needs writable dirs for SQLite DB + device identity
-    volumes:
-      - mc-data:/app/data
-      - mc-identity:/home/node/.mission-control
     read_only: true
     tmpfs:
       - /tmp:size=50M,noexec,nosuid
@@ -101,7 +147,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "node -e \"fetch('http://localhost:4000').then(r=>{process.exit(r.ok?0:1)}).catch(()=>process.exit(1))\"",
+          "wget -q --spider http://localhost:3000/ || exit 1",
         ]
       interval: 30s
       timeout: 10s
@@ -250,10 +296,11 @@ services:
 volumes:
   redis-data:
     driver: local
-  mc-data:
-    driver: local
-  mc-identity:
-    driver: local
+  # REMOVED: mission-control volumes (kept for data recovery if needed)
+  # mc-data:
+  #   driver: local
+  # mc-identity:
+  #   driver: local
   caddy-data:
     driver: local
   caddy-config:
