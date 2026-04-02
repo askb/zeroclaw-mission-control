@@ -23,6 +23,8 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - SEARXNG_URL=http://zeroclaw-searxng:8080
+      - HA_URL=${HA_URL}
+      - HA_TOKEN=${HA_TOKEN}
       - NODE_OPTIONS=--max-old-space-size=3072
     restart: unless-stopped
     networks:
