@@ -11,7 +11,7 @@ services:
     container_name: zeroclaw-gateway
     volumes:
       - ../config/gateway:/home/node/.openclaw
-      - ../agents:/home/node/.openclaw/agents:ro
+      - ../agents:/home/node/.openclaw/agents
       - ../workspace:/home/node/workspace
     ports:
       - "${GATEWAY_BIND_HOST:-127.0.0.1}:${GATEWAY_PORT:-18789}:18789"
