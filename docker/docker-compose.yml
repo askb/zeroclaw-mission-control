@@ -204,12 +204,59 @@ services:
         max-size: "5m"
         max-file: "3"
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: zeroclaw-caddy
+    ports:
+      - "8443:443"
+    volumes:
+      - ../config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    networks:
+      - zeroclaw-net
+    # ── Security Hardening ──
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider --no-check-certificate https://localhost:443/ || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
 volumes:
   redis-data:
     driver: local
   mc-data:
     driver: local
   mc-identity:
+    driver: local
+  caddy-data:
+    driver: local
+  caddy-config:
     driver: local
 
 networks:
