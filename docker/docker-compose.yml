@@ -22,6 +22,7 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - SEARXNG_URL=http://zeroclaw-searxng:8080
       - NODE_OPTIONS=--max-old-space-size=3072
     restart: unless-stopped
     networks:
@@ -110,6 +111,51 @@ services:
       driver: json-file
       options:
         max-size: "10m"
+        max-file: "3"
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: zeroclaw-searxng
+    # Internal only — no host port (gateway accesses via zeroclaw-net)
+    expose:
+      - "8080"
+    volumes:
+      - ../config/searxng:/etc/searxng:ro
+    restart: unless-stopped
+    networks:
+      - zeroclaw-net
+    # ── Security Hardening ──
+    read_only: true
+    tmpfs:
+      - /tmp:size=50M,noexec,nosuid
+      - /var/log/uwsgi:size=10M
+      - /etc/searxng-runtime:size=5M
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:8080/healthz || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
         max-file: "3"
 
   redis:

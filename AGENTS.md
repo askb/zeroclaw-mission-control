@@ -1,7 +1,36 @@
 # AI Agents Guide — ZeroClaw Mission Control
 
-This document helps AI coding assistants (GitHub Copilot, Claude Code, etc.)
-understand this repository and work effectively within it.
+> ⚠️ **Constitution takes precedence.** Read `.specify/memory/constitution.md`
+> first. If anything in this file conflicts with the Constitution, the
+> Constitution wins.
+
+This document helps AI coding assistants (GitHub Copilot, Claude Code,
+OpenClaw agents, etc.) understand this repository and work effectively within it.
+
+## Governance Hierarchy
+
+1. **Constitution** (`.specify/memory/constitution.md`) — Supreme rules
+2. **This file** (`AGENTS.md`) — Development guidelines
+3. **Copilot Instructions** (`.github/copilot-instructions.md`) — IDE-specific rules
+4. **Agent Definitions** (`agents/*/agent.md`) — Per-agent behavioral rules
+5. **Tool Definitions** (`agents/*/tools.md`) — Per-agent tool permissions
+
+## Spec-Driven Development
+
+Before making changes, check for active specs:
+
+```bash
+ls specs/           # Active feature specs
+ls .specify/        # Templates and governance
+```
+
+### Workflow
+1. **Read Constitution** — Understand boundaries
+2. **Check specs/** — See if a spec exists for your task
+3. **Read repo governance** — AGENTS.md, .github/copilot-instructions.md
+4. **Analyze** — Understand current state
+5. **Propose** — Present changes for approval
+6. **Branch + PR** — Never push to main
 
 ## What Is This?
 

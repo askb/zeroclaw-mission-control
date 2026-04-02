@@ -1,5 +1,8 @@
 # ZeroClaw Mission Control — Copilot Instructions
 
+> ⚠️ **Read the Constitution first**: `.specify/memory/constitution.md`
+> It defines the supreme rules. This file provides additional coding standards.
+
 ## Repository Purpose
 
 This repository defines a **zero-trust agent orchestration platform** using
