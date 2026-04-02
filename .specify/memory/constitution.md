@@ -36,6 +36,7 @@ not on this list is **off-limits** for read or write operations.
 | Repository | Access Level | Notes |
 |-----------|-------------|-------|
 | `askb/zeroclaw-mission-control` | Read + PR | This repository |
+| `askb/zeroclaw-dashboard` | Read + PR | Custom dashboard (Next.js) |
 | `askb/askb-ha-config` | Read + PR | Home Assistant config |
 | `askb/ha-garmin-fitness-coach-addon` | Read + PR | Garmin HA addon |
 | `askb/ha-garmin-fitness-coach-app` | Read + PR | Garmin coaching app |
