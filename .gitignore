@@ -5,6 +5,7 @@
 .env
 docker/.env
 *.env.local
+config/gateway/secrets.json
 
 # Docker runtime
 docker/data/
