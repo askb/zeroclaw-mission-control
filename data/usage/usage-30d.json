@@ -1,0 +1,75 @@
+{
+  "updatedAt": 1775170381959,
+  "days": 31,
+  "daily": [
+    {
+      "date": "2026-03-30",
+      "input": 50000,
+      "output": 23,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 50023,
+      "totalCost": 0.0285529,
+      "inputCost": 0.028500000000000004,
+      "outputCost": 0.0000529,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 0
+    },
+    {
+      "date": "2026-03-31",
+      "input": 147986,
+      "output": 476,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 148462,
+      "totalCost": 0.08544682,
+      "inputCost": 0.08435202,
+      "outputCost": 0.0010948000000000002,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 0
+    },
+    {
+      "date": "2026-04-01",
+      "input": 86746,
+      "output": 824,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 87570,
+      "totalCost": 0.05134042,
+      "inputCost": 0.049445220000000005,
+      "outputCost": 0.0018951999999999999,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 0
+    },
+    {
+      "date": "2026-04-02",
+      "input": 2274201,
+      "output": 9142,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 2283343,
+      "totalCost": 1.31732117,
+      "inputCost": 1.2962945700000004,
+      "outputCost": 0.021026599999999996,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 0
+    }
+  ],
+  "totals": {
+    "input": 2558933,
+    "output": 10465,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokens": 2569398,
+    "totalCost": 1.48266131,
+    "inputCost": 1.4585918100000006,
+    "outputCost": 0.02406949999999999,
+    "cacheReadCost": 0,
+    "cacheWriteCost": 0,
+    "missingCostEntries": 0
+  }
+}

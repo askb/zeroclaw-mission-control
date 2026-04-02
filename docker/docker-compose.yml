@@ -13,6 +13,7 @@ services:
       - ../config/gateway:/home/node/.openclaw
       - ../agents:/home/node/.openclaw/agents
       - ../workspace:/home/node/workspace
+      - ../data/usage:/data/usage
     ports:
       - "${GATEWAY_BIND_HOST:-127.0.0.1}:${GATEWAY_PORT:-18789}:18789"
     env_file: .env
@@ -128,6 +129,7 @@ services:
       - ../.specify:/app/data/specify:ro
       - ../agents:/app/data/agents:ro
       - ../config/gateway/workspace:/app/data/workspace:ro
+      - ../data/usage:/app/data/usage:ro
     depends_on:
       gateway:
         condition: service_healthy
