@@ -124,6 +124,10 @@ services:
     environment:
       - GATEWAY_WS_URL=ws://gateway:18789
       - GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
+    volumes:
+      - ../.specify:/app/data/specify:ro
+      - ../agents:/app/data/agents:ro
+      - ../config/gateway/workspace:/app/data/workspace:ro
     depends_on:
       gateway:
         condition: service_healthy
