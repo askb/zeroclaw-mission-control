@@ -114,7 +114,44 @@ EOF
 function create_workspace() {
     local workspace="${PROJECT_ROOT}/workspace"
     mkdir -p "${workspace}"
-    log_info "Created workspace directory: ${workspace}"
+    mkdir -p "${PROJECT_ROOT}/data/usage"
+    log_info "Created workspace and data directories"
+}
+
+function bootstrap_gateway_config() {
+    local config_dir="${PROJECT_ROOT}/config/gateway"
+    local config_file="${config_dir}/openclaw.json"
+    local template="${config_dir}/openclaw.json.example"
+
+    if [[ -f "${config_file}" ]]; then
+        log_warn "openclaw.json already exists — skipping bootstrap"
+        log_warn "To regenerate from template: cp ${template} ${config_file}"
+        return 0
+    fi
+
+    if [[ ! -f "${template}" ]]; then
+        log_error "Template not found: ${template}"
+        return 1
+    fi
+
+    cp "${template}" "${config_file}"
+    chmod 600 "${config_file}"
+    log_info "Created openclaw.json from template (mode 600)"
+    log_info "Secrets use \$VAR references — resolved from secrets.json at runtime"
+
+    # Create empty secrets.json if missing
+    local secrets_file="${config_dir}/secrets.json"
+    if [[ ! -f "${secrets_file}" ]]; then
+        cat > "${secrets_file}" <<SECRETS
+{
+  "TELEGRAM_BOT_TOKEN": "PASTE_FROM_BOTFATHER",
+  "DISCORD_BOT_TOKEN": "PASTE_FROM_DISCORD_DEVELOPER_PORTAL"
+}
+SECRETS
+        chmod 600 "${secrets_file}"
+        log_info "Created secrets.json template (mode 600)"
+        log_warn "Edit secrets.json with your actual bot tokens before starting"
+    fi
 }
 
 function set_permissions() {
@@ -162,6 +199,9 @@ function main() {
 
     log_info "Creating workspace..."
     create_workspace
+
+    log_info "Bootstrapping gateway config..."
+    bootstrap_gateway_config
 
     log_info "Setting permissions..."
     set_permissions

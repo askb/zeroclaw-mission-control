@@ -69,11 +69,8 @@ config/gateway/credentials/
 config/gateway/telegram/
 config/gateway/memory/
 config/gateway/openclaw.json
-config/gateway/devices/
-config/gateway/update-check.json
 
 # Gateway runtime files
 config/gateway/completions/
-config/gateway/devices/
 config/gateway/exec-approvals.json.bak
-config/gateway/update-check.json
+config/gateway/exec-approvals.json

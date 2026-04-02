@@ -53,3 +53,18 @@ repos:
       - id: detect-secrets
         args: [--baseline, .secrets.baseline]
         exclude: \.env\.example$
+
+  # Block gateway runtime files from ever being committed
+  - repo: local
+    hooks:
+      - id: no-gateway-runtime
+        name: Block gateway runtime files
+        entry: >-
+          bash -c 'echo "ERROR: Gateway runtime files must not be committed.
+          These files contain secrets and are gitignored.
+          Use: git reset HEAD <file>" && exit 1'
+        language: system
+        files: >-
+          config/gateway/(openclaw\.json|secrets\.json|
+          exec-approvals\.json|update-check\.json|
+          devices/|canvas/|identity/|logs/|memory/)

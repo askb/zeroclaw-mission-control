@@ -75,7 +75,7 @@
     "telegram": {
       "enabled": true,
       "dmPolicy": "pairing",
-      "botToken": "SET_VIA_SECRETS_JSON",
+      "botToken": "$TELEGRAM_BOT_TOKEN",
       "groupPolicy": "allowlist",
       "streaming": "partial"
     },
@@ -113,7 +113,7 @@
       "token": {
         "source": "env",
         "provider": "default",
-        "id": "ZEROCLAW_GATEWAY_TOKEN"
+        "id": "$ZEROCLAW_GATEWAY_TOKEN"
       },
       "rateLimit": {
         "maxAttempts": 10,
