@@ -46,15 +46,19 @@ cd docker && docker compose up -d
 ../scripts/health-check.sh
 ```
 
-### Access
+### Service Access
 
-| Service | URL | Auth |
-|---------|-----|------|
-| Gateway | `http://localhost:18789` | Token (auto-generated) |
-| Mission Control | `http://localhost:4000` | Token (via gateway) |
+| Service | URL | Description |
+|---------|-----|-------------|
+| Dashboard | `https://<host>:8443` | Mission Control UI |
+| Gateway Control UI | `https://<host>:8444` | OpenClaw Control UI |
+| Gateway WebSocket | `ws://<host>:18789` | Agent WebSocket API |
+| Gateway Health | `https://<host>:8443/health` | Health check endpoint |
 
-> **Note**: By default, services bind to `127.0.0.1` (localhost only).
-> Edit `GATEWAY_BIND_HOST` and `DASHBOARD_BIND_HOST` in `.env` to change.
+> **Note**: Services are fronted by Caddy with self-signed TLS certificates.
+> Accept the browser warning on first visit. By default, services bind to
+> `127.0.0.1` (localhost only). Edit `GATEWAY_BIND_HOST` and
+> `DASHBOARD_BIND_HOST` in `.env` to change.
 
 ## Architecture
 
@@ -130,6 +134,85 @@ in `agents/<name>/tools.md`.
 | `sha-pinned-actions.yaml` | PR (.github/) | Verify all actions are SHA-pinned |
 | `copilot-auto-assign.yml` | Issue labeled "copilot" | Auto-assign Copilot agent |
 | `release-drafter.yaml` | Push to main | Auto-generate release notes |
+| `pr-review-agent.yaml` | PR opened/updated | Agentic PR review (YAML, secrets, Docker validation) |
+| `daily-health.yaml` | Weekday 05:00 UTC / manual | Repository health report (creates issue) |
+
+## Skills
+
+The gateway ships with installable skills that extend agent capabilities:
+
+| Skill | Purpose |
+|-------|---------|
+| **home-assistant** | Read-only access to Home Assistant (entities, states, history) |
+| **discord-workflows** | Cross-channel routing and workflow automation on Discord |
+| **searxng-local-search** | Private, self-hosted web search via SearXNG |
+| **docker-essentials** | Container management (ps, logs, restart, inspect) |
+| **code-review-fix** | Code review assistance with analysis and fix suggestions |
+| **n8n** | n8n workflow automation API integration |
+
+Skills are defined in `config/gateway/workspace/skills/<name>/SKILL.md`.
+
+## Caddy HTTPS Routing
+
+All external access is routed through Caddy with self-signed TLS:
+
+| Port | Service | Routes |
+|------|---------|--------|
+| **8443** | Dashboard | All `/api/*` routes, static pages, `/ws*` (WebSocket), `/health` |
+| **8444** | Gateway Control UI | Full gateway UI (device pairing required) |
+
+- TLS is terminated at Caddy using internal (self-signed) certificates
+- Accept the browser security warning on first visit
+- WebSocket connections (`/ws*`) and health checks (`/health`) on port 8443
+  are reverse-proxied to the gateway
+- The Gateway Control UI on port 8444 requires a paired device for access
+
+See `config/caddy/Caddyfile` for the full routing configuration.
+
+## Discord Integration
+
+ZeroClaw operates a **ZeroClaw HQ** Discord server for agent communication
+and human-in-the-loop workflows.
+
+### Server Structure
+
+| Category | Channels | Purpose |
+|----------|----------|---------|
+| **Command Center** | `#mission-briefing`, `#ops-log` | Task assignment, status updates |
+| **Research Lab** | `#research-requests`, `#findings` | Research tasks and results |
+| **Code Forge** | `#code-review`, `#deployments` | Code review, build/deploy status |
+| **General** | `#general`, `#off-topic` | Team discussion |
+
+### Workflow Routing
+
+- Mention **@zeroclaw** in any channel to trigger agent routing
+- Messages are routed to the appropriate agent based on channel context
+- The `discord-workflows` skill handles cross-channel automation
+- Agents can post status updates, research findings, and code reviews
+
+## Home Assistant Integration
+
+ZeroClaw connects to a Home Assistant instance for smart-home monitoring
+and automation.
+
+### Security Model (Defense in Depth)
+
+| Layer | Protection |
+|-------|-----------|
+| **Dedicated User** | `zeroclaw-ro` — a non-admin, read-only HA user |
+| **Agent Persona** | System prompt restricts agents to read-only operations |
+| **Script Blocking** | HA configuration blocks `script.*` and `automation.*` calls |
+| **GitOps Workflow** | All HA config changes go through PRs on the `askb-ha-config` repo |
+
+### Capabilities
+
+- Query entity states (lights, sensors, climate, media players)
+- Read automation and script definitions
+- Access history and logbook data
+- **Cannot** execute scripts, trigger automations, or change states
+
+The `home-assistant` skill provides agents with structured access to the
+HA REST API. See `config/gateway/workspace/skills/home-assistant/` for details.
 
 ## Configuration
 

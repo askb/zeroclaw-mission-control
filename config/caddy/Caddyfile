@@ -4,17 +4,14 @@
 # ZeroClaw Caddy Reverse Proxy
 # Terminates TLS and proxies to gateway + dashboard services.
 
-# ── HTTPS (primary) ──────────────────────────────────────────────
-localhost {
-	tls internal
-
-	# Gateway: WebSocket connections
-	handle /ws* {
-		reverse_proxy gateway:18789
+# ── Dashboard (port 443 → host 8443) ────────────────────────────
+:443 {
+	tls internal {
+		on_demand
 	}
 
-	# Gateway: REST API
-	handle /api* {
+	# Gateway: WebSocket connections from dashboard
+	handle /ws* {
 		reverse_proxy gateway:18789
 	}
 
@@ -23,13 +20,29 @@ localhost {
 		reverse_proxy gateway:18789
 	}
 
-	# Dashboard (default/fallback)
+	# Gateway: Control UI assets
+	handle /__openclaw__/* {
+		reverse_proxy gateway:18789
+	}
+
+	# Dashboard (everything else — pages + /api/* routes)
 	handle {
 		reverse_proxy dashboard:3000
 	}
 }
 
+# ── Gateway Control UI (port 444 → host 8444) ───────────────────
+:444 {
+	tls internal {
+		on_demand
+	}
+
+	reverse_proxy gateway:18789
+}
+
 # ── HTTP → HTTPS redirect ────────────────────────────────────────
 # Disabled: ports 80/443 occupied by other services on this host.
 # Caddy listens on container :443, mapped to host :8443.
-# Access via: https://<host>:8443/
+# Caddy listens on container :444, mapped to host :8444.
+# Access via: https://<host>:8443/ (dashboard)
+#             https://<host>:8444/ (gateway control UI)

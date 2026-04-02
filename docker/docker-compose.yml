@@ -261,6 +261,7 @@ services:
     container_name: zeroclaw-caddy
     ports:
       - "8443:443"
+      - "8444:444"
     volumes:
       - ../config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
