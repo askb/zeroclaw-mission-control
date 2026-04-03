@@ -125,6 +125,9 @@ services:
     environment:
       - GATEWAY_WS_URL=ws://gateway:18789
       - GATEWAY_TOKEN=${ZEROCLAW_GATEWAY_TOKEN}
+      - GITHUB_RO_TOKEN=${GITHUB_RO_TOKEN}
+      - GERRIT_HTTP_USER=${GERRIT_HTTP_USER}
+      - GERRIT_HTTP_PASS=${GERRIT_HTTP_PASS}
     volumes:
       - ../.specify:/app/data/specify:ro
       - ../agents:/app/data/agents:ro
@@ -174,16 +177,15 @@ services:
     expose:
       - "8080"
     volumes:
-      - ../config/searxng:/etc/searxng:ro
+      - ../config/searxng:/etc/searxng:rw
     restart: unless-stopped
     networks:
       - zeroclaw-net
     # ── Security Hardening ──
-    read_only: true
+    # NOTE: read_only removed — SearXNG 2026.4+ needs writable /etc/searxng
+    # and /etc/ssl/certs at startup (granian server)
     tmpfs:
       - /tmp:size=50M,noexec,nosuid
-      - /var/log/uwsgi:size=10M
-      - /etc/searxng-runtime:size=5M
     cap_drop:
       - ALL
     security_opt:
@@ -200,12 +202,12 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -q --spider http://localhost:8080/healthz || exit 1",
+          "wget -q --spider http://localhost:8080/ || exit 1",
         ]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     logging:
       driver: json-file
       options:
