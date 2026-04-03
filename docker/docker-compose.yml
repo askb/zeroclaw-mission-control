@@ -133,6 +133,7 @@ services:
       - ../agents:/app/data/agents:ro
       - ../config/gateway/workspace:/app/data/workspace:ro
       - ../data/usage:/app/data/usage:ro
+      - ../data/reviews:/app/data/reviews:ro
     depends_on:
       gateway:
         condition: service_healthy
