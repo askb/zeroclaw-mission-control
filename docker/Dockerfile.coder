@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+#
+# ZeroClaw PopeBot Job Runner — Ephemeral Coding Agent
+# Built on aider-chat + git + gh CLI for autonomous PR creation.
+#
+# Build: docker build -f docker/Dockerfile.coder -t zeroclaw-coder:latest .
+# Usage: docker compose run --rm job-runner "Add dark mode toggle"
+
+FROM python:3.12-slim AS base
+
+# Metadata
+LABEL org.opencontainers.image.title="ZeroClaw Coder"
+LABEL org.opencontainers.image.description="Ephemeral coding agent with aider"
+LABEL org.opencontainers.image.source="https://github.com/askb/zeroclaw-mission-control"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    openssh-client \
+    curl \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install GitHub CLI
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update && apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install aider-chat
+RUN pip install --no-cache-dir aider-chat
+
+# Create non-root user
+RUN groupadd -r coder && useradd -r -g coder -m -d /home/coder coder
+
+# Setup workspace
+RUN mkdir -p /workspace /output && chown -R coder:coder /workspace /output
+
+# Copy launch script
+COPY scripts/launch_coding_job.py /usr/local/bin/launch_coding_job.py
+RUN chmod +x /usr/local/bin/launch_coding_job.py
+
+# Copy config (allowlist)
+COPY config/allowed-repos.json /config/allowed-repos.json
+
+# Switch to non-root user
+USER coder
+WORKDIR /workspace
+
+# Git config for the agent
+RUN git config --global user.name "zeroclaw-agent" \
+    && git config --global user.email "zeroclaw-agent@noreply.github.com" \
+    && git config --global init.defaultBranch main
+
+ENTRYPOINT ["python3", "/usr/local/bin/launch_coding_job.py"]

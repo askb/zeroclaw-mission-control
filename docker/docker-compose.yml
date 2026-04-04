@@ -305,14 +305,49 @@ services:
         max-size: "5m"
         max-file: "3"
 
+  # ── PopeBot Job Runner (ephemeral, one-shot) ────────────────────
+  # Usage: docker compose run --rm job-runner "Add dark mode toggle" askb/zeroclaw-dashboard
+  job-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.coder
+    profiles:
+      - jobs
+    restart: "no"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:noexec,size=512m
+      - /workspace:size=2g
+    volumes:
+      - ../config/allowed-repos.json:/config/allowed-repos.json:ro
+      - ../data/jobs:/output:rw
+    environment:
+      - GITHUB_PAT=${GITHUB_PAT}
+      - GITHUB_USER=${GITHUB_USER:-askb}
+      - TARGET_REPO=${TARGET_REPO:-askb/zeroclaw-mission-control}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - AIDER_MODEL=${AIDER_MODEL:-openrouter/moonshotai/kimi-k2}
+      - JOB_TIMEOUT=1800
+    networks:
+      - zeroclaw-net
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   redis-data:
     driver: local
-  # REMOVED: mission-control volumes (kept for data recovery if needed)
-  # mc-data:
-  #   driver: local
-  # mc-identity:
-  #   driver: local
   caddy-data:
     driver: local
   caddy-config:

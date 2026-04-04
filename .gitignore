@@ -18,7 +18,7 @@ config/gateway/*.tmp
 docker/docker-compose.override.yml
 
 # Workspace data
-workspace/
+/workspace/
 .workspace/
 
 # OS artifacts
@@ -61,7 +61,10 @@ config/gateway/identity/
 config/gateway/devices/
 config/gateway/logs/
 config/gateway/canvas/
-config/gateway/workspace/
+config/gateway/workspace/*
+!config/gateway/workspace/skills
+!config/gateway/workspace/skills/*
+!config/gateway/workspace/skills/**/*
 config/gateway/update-check.json
 agents/main/
 !agents/main/agent.md

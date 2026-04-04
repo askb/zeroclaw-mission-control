@@ -1,0 +1,18 @@
+{
+  "description": "Repos the PopeBot job runner is allowed to write to (push branches + create PRs). Glob patterns supported.",
+  "allowed_owners": [
+    "askb"
+  ],
+  "allowed_repos": [
+    "askb/zeroclaw-mission-control",
+    "askb/zeroclaw-dashboard",
+    "askb/askb-ha-config"
+  ],
+  "denied_repos": [],
+  "max_concurrent_jobs": 2,
+  "max_daily_jobs": 20,
+  "job_timeout_seconds": 1800,
+  "branch_prefix": "agent-job/",
+  "pr_labels": ["zeroclaw-agent", "automated"],
+  "require_approval_for": []
+}
