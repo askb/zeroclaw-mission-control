@@ -134,6 +134,7 @@ services:
       - ../config/gateway/workspace:/app/data/workspace:ro
       - ../data/usage:/app/data/usage:ro
       - ../data/reviews:/app/data/reviews:ro
+      - ../data/jobs:/app/data/jobs:ro
     depends_on:
       gateway:
         condition: service_healthy
