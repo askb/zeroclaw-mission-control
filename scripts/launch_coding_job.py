@@ -55,7 +55,9 @@ def validate_repo(repo_full_name: str, allowlist: dict) -> bool:
 
 def run_cmd(cmd: list, cwd=None, check=True, capture=False) -> subprocess.CompletedProcess:
     """Run a shell command with logging."""
-    print(f"  $ {' '.join(cmd)}")
+    # Mask tokens in log output
+    safe_cmd = [c.replace(GITHUB_PAT, "***") if GITHUB_PAT and GITHUB_PAT in c else c for c in cmd]
+    print(f"  $ {' '.join(safe_cmd)}")
     return subprocess.run(
         cmd, cwd=cwd, check=check,
         capture_output=capture, text=True if capture else None,
@@ -160,6 +162,8 @@ def main():
 
     # ── Step 3: Create feature branch ────────────────────────────────────────
     print(f"\n🌿 Step 3: Creating branch {branch_name}...")
+    run_cmd(["git", "config", "user.email", "zeroclaw-agent@noreply.github.com"], cwd=repo_dir)
+    run_cmd(["git", "config", "user.name", "zeroclaw-agent"], cwd=repo_dir)
     run_cmd(["git", "checkout", "-b", branch_name], cwd=repo_dir)
 
     # ── Step 4: Run aider ────────────────────────────────────────────────────

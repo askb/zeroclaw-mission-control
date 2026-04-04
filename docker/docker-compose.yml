@@ -323,6 +323,7 @@ services:
     tmpfs:
       - /tmp:noexec,size=512m,uid=999,gid=999
       - /workspace:size=2g,uid=999,gid=999
+      - /home/coder:size=256m,uid=999,gid=999
     volumes:
       - ../config/allowed-repos.json:/config/allowed-repos.json:ro
       - ../data/jobs:/output:rw
