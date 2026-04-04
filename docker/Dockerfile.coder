@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2026 The Linux Foundation
 #
-# ZeroClaw PopeBot Job Runner — Ephemeral Coding Agent
+# ZeroClaw Coding Agent — Ephemeral Job Runner
 # Built on aider-chat + git + gh CLI for autonomous PR creation.
 #
 # Build: docker build -f docker/Dockerfile.coder -t zeroclaw-coder:latest .

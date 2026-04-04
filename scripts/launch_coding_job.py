@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2026 The Linux Foundation
 ##############################################################################
-# ZeroClaw PopeBot Job Runner — Ephemeral Coding Agent
+# ZeroClaw Coding Agent — Ephemeral Job Runner
 #
 # Orchestrates: validate repo → clone → aider edit → commit → push → PR
 # Usage: launch_coding_job.py "Add dark mode toggle" [repo_url]
@@ -124,7 +124,7 @@ def main():
         "triggered_by": os.getenv("TRIGGERED_BY", "manual"),
     }
 
-    print(f"🚀 ZeroClaw PopeBot Job {job_id}")
+    print(f"🚀 ZeroClaw Agent Job {job_id}")
     print(f"   Task: {task}")
     print(f"   Repo: {repo_full_name}")
     print(f"   Branch: {branch_name}")
@@ -216,7 +216,7 @@ def main():
 
     # ── Step 6: Commit and push ──────────────────────────────────────────────
     print("\n📤 Step 6: Committing and pushing...")
-    commit_msg = f"🤖 agent-job/{job_id}: {task[:80]}\n\nAutonomous coding job by ZeroClaw PopeBot.\nTask: {task}\nModel: {AIDER_MODEL}\n\nCo-authored-by: zeroclaw-agent <zeroclaw-agent@noreply.github.com>"
+    commit_msg = f"🤖 agent-job/{job_id}: {task[:80]}\n\nAutonomous coding job by ZeroClaw.\nTask: {task}\nModel: {AIDER_MODEL}\n\nCo-authored-by: zeroclaw-agent <zeroclaw-agent@noreply.github.com>"
 
     run_cmd(["git", "add", "-A"], cwd=repo_dir)
     run_cmd(["git", "commit", "-m", commit_msg], cwd=repo_dir)
@@ -240,7 +240,7 @@ def main():
         f"**Model:** `{AIDER_MODEL}`\n"
         f"**Branch:** `{branch_name}`\n\n"
         f"---\n"
-        f"*Created by ZeroClaw PopeBot — review before merging.*"
+        f"*Created by ZeroClaw Coding Agent — review before merging.*"
     )
 
     env_gh = os.environ.copy()

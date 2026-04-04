@@ -306,7 +306,7 @@ services:
         max-size: "5m"
         max-file: "3"
 
-  # ── PopeBot Job Runner (ephemeral, one-shot) ────────────────────
+  # ── ZeroClaw Coding Agent (ephemeral, one-shot) ────────────────────
   # Usage: docker compose run --rm job-runner "Add dark mode toggle" askb/zeroclaw-dashboard
   job-runner:
     build:
@@ -321,11 +321,12 @@ services:
     cap_drop:
       - ALL
     tmpfs:
-      - /tmp:noexec,size=512m
-      - /workspace:size=2g
+      - /tmp:noexec,size=512m,uid=999,gid=999
+      - /workspace:size=2g,uid=999,gid=999
     volumes:
       - ../config/allowed-repos.json:/config/allowed-repos.json:ro
       - ../data/jobs:/output:rw
+    user: "999:999"
     environment:
       - GITHUB_PAT=${GITHUB_PAT}
       - GITHUB_USER=${GITHUB_USER:-askb}
