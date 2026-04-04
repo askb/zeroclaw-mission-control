@@ -38,41 +38,54 @@ jobs:
       - name: Run detect-secrets
         run: |
           pip install --quiet detect-secrets
-          # Scan using baseline to exclude known false positives
-          if [ -f .secrets.baseline ]; then
-            detect-secrets scan --baseline .secrets.baseline \
-              --exclude-files '\.env\.example$' \
-              --exclude-files '\.gitignore$' \
-              --exclude-files 'LICENSE$' \
-              --exclude-files '\.lock\.yml$' \
-              > .secrets-report.json
-          else
-            detect-secrets scan \
-              --exclude-files '\.env\.example$' \
-              --exclude-files '\.gitignore$' \
-              --exclude-files 'LICENSE$' \
-              --exclude-files '\.lock\.yml$' \
-              > .secrets-report.json
-          fi
 
-          # Check for NEW secrets not in baseline
-          python3 -c "
+          if [ -f .secrets.baseline ]; then
+            # Update baseline in-place with any new findings
+            cp .secrets.baseline .secrets-check.json
+            detect-secrets scan --baseline .secrets-check.json \
+              --exclude-files '\.env\.example$' \
+              --exclude-files '\.gitignore$' \
+              --exclude-files 'LICENSE$' \
+              --exclude-files '\.lock\.yml$'
+
+            # Check for unaudited (new) secrets
+            python3 -c "
           import json, sys
-          with open('.secrets-report.json') as f:
+          with open('.secrets-check.json') as f:
               data = json.load(f)
           results = data.get('results', {})
           new_secrets = []
           for file, secrets in results.items():
               for s in secrets:
-                  if not s.get('is_secret') == False:
+                  if s.get('is_secret') is None:
                       new_secrets.append((file, s))
           if new_secrets:
               print(f'❌ Found {len(new_secrets)} NEW potential secret(s):')
               for file, s in new_secrets:
                   print(f'  {file}:{s[\"line_number\"]} — {s[\"type\"]}')
               sys.exit(1)
-          print('✅ No new secrets detected')
+          print('✅ No new secrets detected (baseline has ' + str(sum(len(v) for v in results.values())) + ' audited entries)')
           "
+          else
+            # No baseline — scan and fail on any finding
+            detect-secrets scan \
+              --exclude-files '\.env\.example$' \
+              --exclude-files '\.gitignore$' \
+              --exclude-files 'LICENSE$' \
+              --exclude-files '\.lock\.yml$' \
+              > .secrets-report.json
+
+            python3 -c "
+          import json, sys
+          with open('.secrets-report.json') as f:
+              data = json.load(f)
+          total = sum(len(v) for v in data.get('results', {}).items())
+          if total > 0:
+              print(f'❌ Found {total} potential secret(s)')
+              sys.exit(1)
+          print('✅ No secrets detected')
+          "
+          fi
           echo "Secret scan passed"
 
   credential-patterns:
