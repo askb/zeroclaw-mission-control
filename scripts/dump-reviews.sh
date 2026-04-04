@@ -14,6 +14,7 @@ mkdir -p "${REVIEWS_DIR}"
 # Read tokens
 GITHUB_TOKEN=$(python3 -c "import json; print(json.load(open('${SECRETS_FILE}'))['GITHUB_RO_TOKEN'])")
 GERRIT_USER=$(python3 -c "import json; print(json.load(open('${SECRETS_FILE}'))['GERRIT_HTTP_USER'])")
+export GERRIT_PASS
 GERRIT_PASS=$(python3 -c "import json; print(json.load(open('${SECRETS_FILE}'))['GERRIT_HTTP_PASS'])")
 
 GERRIT="https://git.opendaylight.org/gerrit"

@@ -38,34 +38,42 @@ jobs:
       - name: Run detect-secrets
         run: |
           pip install --quiet detect-secrets
-          # Scan all files, excluding known safe patterns
-          detect-secrets scan \
-            --exclude-files '\.env\.example$' \
-            --exclude-files '\.gitignore$' \
-            --exclude-files 'LICENSE$' \
-            --exclude-files '\.lock\.yml$' \
-            > .secrets-report.json
+          # Scan using baseline to exclude known false positives
+          if [ -f .secrets.baseline ]; then
+            detect-secrets scan --baseline .secrets.baseline \
+              --exclude-files '\.env\.example$' \
+              --exclude-files '\.gitignore$' \
+              --exclude-files 'LICENSE$' \
+              --exclude-files '\.lock\.yml$' \
+              > .secrets-report.json
+          else
+            detect-secrets scan \
+              --exclude-files '\.env\.example$' \
+              --exclude-files '\.gitignore$' \
+              --exclude-files 'LICENSE$' \
+              --exclude-files '\.lock\.yml$' \
+              > .secrets-report.json
+          fi
 
-          # Check if any secrets were found
-          if python3 -c "
+          # Check for NEW secrets not in baseline
+          python3 -c "
           import json, sys
           with open('.secrets-report.json') as f:
               data = json.load(f)
           results = data.get('results', {})
-          total = sum(len(v) for v in results.values())
-          if total > 0:
-              print(f'❌ Found {total} potential secret(s):')
-              for file, secrets in results.items():
-                  for s in secrets:
-                      print(f'  {file}:{s[\"line_number\"]} — {s[\"type\"]}')
+          new_secrets = []
+          for file, secrets in results.items():
+              for s in secrets:
+                  if not s.get('is_secret') == False:
+                      new_secrets.append((file, s))
+          if new_secrets:
+              print(f'❌ Found {len(new_secrets)} NEW potential secret(s):')
+              for file, s in new_secrets:
+                  print(f'  {file}:{s[\"line_number\"]} — {s[\"type\"]}')
               sys.exit(1)
-          print('✅ No secrets detected')
-          "; then
-            echo "Secret scan passed"
-          else
-            echo "::error::Potential secrets found — review .secrets-report.json"
-            exit 1
-          fi
+          print('✅ No new secrets detected')
+          "
+          echo "Secret scan passed"
 
   credential-patterns:
     name: Credential Pattern Scan

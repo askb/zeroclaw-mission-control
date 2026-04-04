@@ -66,5 +66,5 @@ repos:
         language: system
         files: >-
           config/gateway/(openclaw\.json|secrets\.json|
-          exec-approvals\.json|update-check\.json|
-          devices/|canvas/|identity/|logs/|memory/)
+          exec-approvals\.json|update-check\.json)$|
+          config/gateway/(devices|canvas|identity|logs|memory)/
