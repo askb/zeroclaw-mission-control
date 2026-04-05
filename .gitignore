@@ -52,7 +52,6 @@ tmp/
 *.tmp
 
 # Detect-secrets baseline
-.secrets.baseline
 
 # Gateway runtime artifacts
 config/gateway/openclaw.json.bak*

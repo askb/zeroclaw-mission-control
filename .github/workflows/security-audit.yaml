@@ -105,7 +105,7 @@ jobs:
           if grep -rn 'sk-ant-api03\|sk-[a-zA-Z0-9]\{40,\}\|BSA[a-zA-Z0-9]\{30,\}' \
             --include='*.yml' --include='*.yaml' --include='*.json5' \
             --include='*.sh' --include='*.md' \
-            --exclude-dir='.git' .; then
+            --exclude-dir='.git' --exclude='security-audit.yaml' .; then
             echo "❌ Possible API keys found"
             ERRORS=$((ERRORS + 1))
           else
@@ -115,7 +115,7 @@ jobs:
           # Check for private keys
           echo "── Checking for private keys ──"
           if grep -rn 'BEGIN.*PRIVATE KEY\|BEGIN RSA\|BEGIN EC PRIVATE' \
-            --exclude-dir='.git' .; then
+            --exclude-dir='.git' --exclude='security-audit.yaml' .; then
             echo "❌ Private key material found"
             ERRORS=$((ERRORS + 1))
           else
