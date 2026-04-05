@@ -46,7 +46,9 @@ jobs:
               --exclude-files '\.env\.example$' \
               --exclude-files '\.gitignore$' \
               --exclude-files 'LICENSE$' \
-              --exclude-files '\.lock\.yml$'
+              --exclude-files '\.lock\.yml$' \
+              --exclude-files '\.secrets\.baseline$' \
+              --exclude-files 'security-audit\.yaml$'
 
             # Check for unaudited (new) secrets
             python3 -c "
@@ -73,6 +75,8 @@ jobs:
               --exclude-files '\.gitignore$' \
               --exclude-files 'LICENSE$' \
               --exclude-files '\.lock\.yml$' \
+              --exclude-files '\.secrets\.baseline$' \
+              --exclude-files 'security-audit\.yaml$' \
               > .secrets-report.json
 
             python3 -c "

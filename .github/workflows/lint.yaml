@@ -60,4 +60,4 @@ jobs:
           pip install --quiet pre-commit
           pre-commit run --all-files
         env:
-          SKIP: no-commit-to-branch
+          SKIP: no-commit-to-branch,detect-secrets
