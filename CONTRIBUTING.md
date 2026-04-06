@@ -381,3 +381,111 @@ See [SECURITY.md](SECURITY.md) for our vulnerability disclosure policy.
 ## Questions?
 
 Open an issue or start a discussion in the repository. We're happy to help!
+# Contributing Guidelines
+
+Thank you for your interest in contributing to this project! This document outlines the process for submitting issues, pull requests, and our coding standards.
+
+## Submitting Issues
+
+When submitting an issue, please:
+
+1. **Search existing issues** first to avoid duplicates
+2. Use a clear, descriptive title
+3. Provide detailed reproduction steps for bugs
+4. Include relevant system information (OS, Python version, etc.)
+5. Add appropriate labels when possible
+
+## Pull Request Process
+
+### Before You Start
+- Fork the repository
+- Create a feature branch from `main`: `git checkout -b feature/your-feature-name`
+- Ensure your changes don't break existing functionality
+
+### Submitting Your PR
+1. Write clear, concise commit messages
+2. Update documentation as needed
+3. Add tests for new functionality
+4. Ensure all tests pass: `pytest` or `python -m pytest`
+5. Push your branch: `git push origin feature/your-feature-name`
+6. Open a pull request with:
+   - A clear title and description
+   - Link to any related issues
+   - Screenshots/logs if applicable
+
+### Review Process
+- Maintainers will review within 2-3 business days
+- Address feedback promptly
+- Squash commits if requested
+
+## Code Style Requirements
+
+### Python
+- Follow [PEP 8](https://peps.python.org/pep-0008/)
+- Use [Black](https://black.readthedocs.io/) for formatting: `black .`
+- Use [isort](https://pycqa.github.io/isort/) for imports: `isort .`
+- Add type hints where appropriate
+- Maximum line length: 88 characters (Black default)
+
+### Documentation
+- Use [Google style](https://google.github.io/styleguide/pyguide.html) docstrings
+- Update README.md for user-facing changes
+- Keep changelog updated in `CHANGELOG.md`
+
+### Testing
+- Write unit tests for new features
+- Maintain or improve test coverage
+- Use pytest for testing framework
+- Test file naming: `test_*.py`
+
+## Automated PR Creation
+
+This repository uses an AI coding agent that can:
+- Create automated pull requests from natural language requests
+- Generate tests for new functionality
+- Refactor existing code while maintaining behavior
+- Update documentation automatically
+
+### How It Works
+1. Issues labeled with `ai-assist` are reviewed by the coding agent
+2. The agent analyzes the request and creates appropriate changes
+3. A pull request is automatically generated with:
+   - Clear commit messages
+   - Updated tests
+   - Documentation updates
+   - Descriptive PR title and body
+
+### Agent Capabilities
+- **Code Generation**: Creates new features from specifications
+- **Refactoring**: Restructures code without changing behavior
+- **Bug Fixes**: Addresses reported issues with tests
+- **Documentation**: Updates README, docstrings, and examples
+- **Dependency Management**: Updates requirements files
+
+### Agent Limitations
+- Cannot access external APIs during development
+- Requires human review for architectural decisions
+- May need guidance on business logic requirements
+- Cannot deploy changes to production
+
+### Triggering Automated PRs
+To request automated assistance:
+1. Create an issue with the `ai-assist` label
+2. Provide clear, specific requirements
+3. The agent will respond with proposed changes for approval
+4. Review and merge the generated PR
+
+## Getting Help
+
+- **Questions**: Open a discussion in the GitHub Discussions tab
+- **Real-time chat**: Join our [Discord/Slack channel]
+- **Code review**: Tag maintainers in your PR
+
+## Recognition
+
+Contributors are recognized in:
+- `CONTRIBUTORS.md` file
+- Release notes for significant contributions
+- Special mentions in project announcements
+
+Thank you for contributing!
